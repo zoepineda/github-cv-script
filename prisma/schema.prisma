@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Repository {
+  id        String   @id @default(cuid())
+  owner     String
+  name      String
+  fullName  String   @unique // "GoRocky/core"
+  prs       PR[]
+  createdAt DateTime @default(now())
+}
+
+model PR {
+  id              String    @id @default(cuid())
+  number          Int
+  title           String
+  url             String
+  description     String?
+  mergedAt        DateTime?
+  linesAdded      Int       @default(0)
+  linesDeleted    Int       @default(0)
+  category        String // frontend, backend, fullstack, other
+  achievementType String // feature, fix, refactor, other
+  summary         String?
+
+  // Generated fields (populated later by AI pipeline)
+  impactSummary String?
+  resumeBullet  String?
+  skillTags     String? // JSON array stored as string for SQLite
+  impactScore   Float?
+
+  repository   Repository @relation(fields: [repositoryId], references: [id])
+  repositoryId String
+
+  syncedAt  DateTime @default(now())
+  createdAt DateTime @default(now())
+
+  @@unique([repositoryId, number])
+  @@index([mergedAt])
+  @@index([category])
+}
+
+model SyncLog {
+  id          String   @id @default(cuid())
+  source      String // "github", "clickup"
+  status      String // "success", "error"
+  prsAdded    Int      @default(0)
+  prsUpdated  Int      @default(0)
+  error       String?
+  completedAt DateTime @default(now())
+}

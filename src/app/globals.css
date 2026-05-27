@@ -1,0 +1,61 @@
+@import "tailwindcss";
+
+@theme inline {
+  /* GitHub Primer Dark — actual token values */
+  --color-canvas-default: #0d1117;
+  --color-canvas-subtle: #161b22;
+  --color-canvas-inset: #010409;
+  --color-border-default: #30363d;
+  --color-border-muted: #21262d;
+
+  --color-fg-default: #e6edf3;
+  --color-fg-muted: #7d8590;
+  --color-fg-subtle: #6e7681;
+
+  --color-accent-fg: #2f81f7;
+  --color-accent-emphasis: #1f6feb;
+
+  --color-success-fg: #3fb950;
+  --color-danger-fg: #f85149;
+  --color-done-fg: #d2a8ff;
+  --color-attention-fg: #d29922;
+
+  /* Label palette */
+  --color-label-blue-bg: #1a2332;
+  --color-label-blue-fg: #79c0ff;
+  --color-label-purple-bg: #271a35;
+  --color-label-purple-fg: #d2a8ff;
+  --color-label-green-bg: #1a2e1f;
+  --color-label-green-fg: #7ee787;
+  --color-label-orange-bg: #2a2114;
+  --color-label-orange-fg: #d29922;
+  --color-label-gray-bg: #1c1e23;
+  --color-label-gray-fg: #7d8590;
+
+  /* Font stacks */
+  --font-sans: "Mona Sans", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", "SF Mono", Menlo, monospace;
+}
+
+body {
+  background: var(--color-canvas-default);
+  color: var(--color-fg-default);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Focus styles */
+:focus-visible {
+  outline: 2px solid var(--color-accent-fg);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
