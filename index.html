@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My GitHub PRs</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+          sans-serif;
+        background: #0d1117;
+        color: #c9d1d9;
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 2rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid #30363d;
+      }
+
+      h1 {
+        color: #58a6ff;
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .stats {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+      }
+
+      .stat {
+        background: #161b22;
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        border: 1px solid #30363d;
+      }
+
+      .stat-value {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #58a6ff;
+      }
+
+      .stat-label {
+        font-size: 0.875rem;
+        color: #8b949e;
+      }
+
+      .filters {
+        background: #161b22;
+        padding: 1.5rem;
+        border-radius: 8px;
+        border: 1px solid #30363d;
+        margin-bottom: 2rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: center;
+      }
+
+      .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+
+      .filter-group label {
+        font-size: 0.75rem;
+        color: #8b949e;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .filters input,
+      .filters select {
+        background: #0d1117;
+        border: 1px solid #30363d;
+        color: #c9d1d9;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-size: 0.875rem;
+        min-width: 150px;
+      }
+
+      .filters input:focus,
+      .filters select:focus {
+        outline: none;
+        border-color: #58a6ff;
+      }
+
+      .filters input[type="text"] {
+        min-width: 250px;
+      }
+
+      .clear-btn {
+        background: #21262d;
+        border: 1px solid #30363d;
+        color: #c9d1d9;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.875rem;
+        margin-left: auto;
+      }
+
+      .clear-btn:hover {
+        background: #30363d;
+      }
+
+      .results-count {
+        color: #8b949e;
+        margin-bottom: 1rem;
+        font-size: 0.875rem;
+      }
+
+      .pr-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .pr-card {
+        background: #161b22;
+        border: 1px solid #30363d;
+        border-radius: 8px;
+        padding: 1.25rem;
+        transition: border-color 0.2s;
+      }
+
+      .pr-card:hover {
+        border-color: #58a6ff;
+      }
+
+      .pr-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+        margin-bottom: 0.75rem;
+      }
+
+      .pr-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+      }
+
+      .pr-title a {
+        color: #58a6ff;
+        text-decoration: none;
+      }
+
+      .pr-title a:hover {
+        text-decoration: underline;
+      }
+
+      .pr-meta {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-bottom: 0.75rem;
+      }
+
+      .tag {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-weight: 500;
+      }
+
+      .tag-frontend {
+        background: #1f3a5f;
+        color: #58a6ff;
+      }
+
+      .tag-backend {
+        background: #2d1f3d;
+        color: #bc8cff;
+      }
+
+      .tag-fullstack {
+        background: #1f3d2d;
+        color: #7ee787;
+      }
+
+      .tag-other {
+        background: #3d3d1f;
+        color: #d4a72c;
+      }
+
+      .tag-feature {
+        background: #238636;
+        color: #fff;
+      }
+
+      .tag-fix {
+        background: #8957e5;
+        color: #fff;
+      }
+
+      .tag-refactor {
+        background: #1f6feb;
+        color: #fff;
+      }
+
+      .tag-repo {
+        background: #30363d;
+        color: #c9d1d9;
+      }
+
+      .pr-stats {
+        font-size: 0.8rem;
+        color: #8b949e;
+      }
+
+      .pr-stats .additions {
+        color: #3fb950;
+      }
+
+      .pr-stats .deletions {
+        color: #f85149;
+      }
+
+      .pr-summary {
+        color: #8b949e;
+        font-size: 0.9rem;
+        margin-top: 0.75rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid #21262d;
+      }
+
+      .pr-date {
+        color: #8b949e;
+        font-size: 0.8rem;
+        white-space: nowrap;
+      }
+
+      .no-results {
+        text-align: center;
+        padding: 3rem;
+        color: #8b949e;
+      }
+
+      .loading {
+        text-align: center;
+        padding: 3rem;
+        color: #8b949e;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 1rem;
+        }
+
+        .filters {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .filters input,
+        .filters select {
+          width: 100%;
+          min-width: unset;
+        }
+
+        .clear-btn {
+          margin-left: 0;
+        }
+
+        .pr-header {
+          flex-direction: column;
+        }
+
+        .stats {
+          gap: 1rem;
+        }
+
+        .stat {
+          padding: 0.75rem 1.25rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>My GitHub PRs</h1>
+        <p>Pull requests for CV reference</p>
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-value" id="total-prs">-</div>
+            <div class="stat-label">Total PRs</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value" id="total-repos">-</div>
+            <div class="stat-label">Repositories</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value" id="total-lines">-</div>
+            <div class="stat-label">Lines Added</div>
+          </div>
+        </div>
+      </header>
+
+      <div class="filters">
+        <div class="filter-group">
+          <label>Search</label>
+          <input type="text" id="search" plwaceholder="Search PRs..." />
+        </div>
+        <div class="filter-group">
+          <label>Category</label>
+          <select id="category">
+            <option value="">All Categories</option>
+            <option value="frontend">Frontend</option>
+            <option value="backend">Backend</option>
+            <option value="fullstack">Fullstack</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Achievement</label>
+          <select id="achievement">
+            <option value="">All Types</option>
+            <option value="feature">Feature</option>
+            <option value="fix">Fix</option>
+            <option value="refactor">Refactor</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Repository</label>
+          <select id="repository">
+            <option value="">All Repositories</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Date Range</label>
+          <input type="month" id="start-date" />
+        </div>
+        <div class="filter-group">
+          <label>To</label>
+          <input type="month" id="end-date" />
+        </div>
+        <button class="clear-btn" onclick="clearFilters()">
+          Clear Filters
+        </button>
+      </div>
+
+      <div class="results-count" id="results-count"></div>
+
+      <div class="pr-list" id="pr-list">
+        <div class="loading">Loading PRs...</div>
+      </div>
+    </div>
+
+    <script>
+      let allPRs = [];
+      let data = null;
+
+      async function loadData() {
+        try {
+          const response = await fetch("prs.json?t=" + Date.now(), {
+            cache: "no-store",
+          });
+          data = await response.json();
+
+          // Flatten PRs from nested structure
+          allPRs = [];
+          for (const category in data.by_category) {
+            for (const repo in data.by_category[category]) {
+              for (const pr of data.by_category[category][repo]) {
+                allPRs.push(pr);
+              }
+            }
+          }
+
+          // Sort by date
+          allPRs.sort((a, b) =>
+            (b.merged_at || "").localeCompare(a.merged_at || ""),
+          );
+
+          // Update stats
+          document.getElementById("total-prs").textContent = data.total_prs;
+          document.getElementById("total-repos").textContent =
+            Object.keys(data.category_summary).length > 0
+              ? new Set(allPRs.map((pr) => pr.repository)).size
+              : 0;
+
+          const totalLines = allPRs.reduce(
+            (sum, pr) => sum + (pr.lines_added || 0),
+            0,
+          );
+          document.getElementById("total-lines").textContent =
+            totalLines.toLocaleString();
+
+          // Populate repository filter
+          const repos = [...new Set(allPRs.map((pr) => pr.repository))].sort();
+          const repoSelect = document.getElementById("repository");
+          repos.forEach((repo) => {
+            const option = document.createElement("option");
+            option.value = repo;
+            option.textContent = repo;
+            repoSelect.appendChild(option);
+          });
+
+          renderPRs(allPRs);
+        } catch (error) {
+          document.getElementById("pr-list").innerHTML =
+            '<div class="no-results">Error loading PRs. Make sure prs.json exists.</div>';
+          console.error(error);
+        }
+      }
+
+      function renderPRs(prs) {
+        const container = document.getElementById("pr-list");
+
+        if (prs.length === 0) {
+          container.innerHTML =
+            '<div class="no-results">No PRs match your filters</div>';
+          document.getElementById("results-count").textContent = "0 PRs found";
+          return;
+        }
+
+        document.getElementById("results-count").textContent =
+          `${prs.length} PR${prs.length === 1 ? "" : "s"} found`;
+
+        container.innerHTML = prs
+          .map(
+            (pr) => `
+                <div class="pr-card">
+                    <div class="pr-header">
+                        <div class="pr-title">
+                            <a href="${pr.url}" target="_blank">${escapeHtml(pr.title)}</a>
+                        </div>
+                        <div class="pr-date">${formatDate(pr.merged_at)}</div>
+                    </div>
+                    <div class="pr-meta">
+                        <span class="tag tag-${pr.category}">${pr.category}</span>
+                        <span class="tag tag-${pr.achievement_type}">${pr.achievement_type}</span>
+                        <span class="tag tag-repo">${pr.repository}</span>
+                        <span class="pr-stats">
+                            <span class="additions">+${(pr.lines_added || 0).toLocaleString()}</span> /
+                            <span class="deletions">-${(pr.lines_deleted || 0).toLocaleString()}</span>
+                        </span>
+                    </div>
+                    ${pr.summary ? `<div class="pr-summary">${escapeHtml(pr.summary)}</div>` : ""}
+                </div>
+            `,
+          )
+          .join("");
+      }
+
+      function filterPRs() {
+        const search = document.getElementById("search").value.toLowerCase();
+        const category = document.getElementById("category").value;
+        const achievement = document.getElementById("achievement").value;
+        const repository = document.getElementById("repository").value;
+        const startDate = document.getElementById("start-date").value;
+        const endDate = document.getElementById("end-date").value;
+
+        const filtered = allPRs.filter((pr) => {
+          // Search filter
+          if (
+            search &&
+            !pr.title.toLowerCase().includes(search) &&
+            !(pr.summary || "").toLowerCase().includes(search)
+          ) {
+            return false;
+          }
+
+          // Category filter
+          if (category && pr.category !== category) {
+            return false;
+          }
+
+          // Achievement filter
+          if (achievement && pr.achievement_type !== achievement) {
+            return false;
+          }
+
+          // Repository filter
+          if (repository && pr.repository !== repository) {
+            return false;
+          }
+
+          // Date filters
+          if (startDate || endDate) {
+            const prDate = (pr.merged_at || "").substring(0, 7); // YYYY-MM
+            if (startDate && prDate < startDate) return false;
+            if (endDate && prDate > endDate) return false;
+          }
+
+          return true;
+        });
+
+        renderPRs(filtered);
+      }
+
+      function clearFilters() {
+        document.getElementById("search").value = "";
+        document.getElementById("category").value = "";
+        document.getElementById("achievement").value = "";
+        document.getElementById("repository").value = "";
+        document.getElementById("start-date").value = "";
+        document.getElementById("end-date").value = "";
+        renderPRs(allPRs);
+      }
+
+      function formatDate(dateStr) {
+        if (!dateStr) return "N/A";
+        const date = new Date(dateStr);
+        return date.toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        });
+      }
+
+      function escapeHtml(text) {
+        if (!text) return "";
+        const div = document.createElement("div");
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      // Event listeners
+      document.getElementById("search").addEventListener("input", filterPRs);
+      document.getElementById("category").addEventListener("change", filterPRs);
+      document
+        .getElementById("achievement")
+        .addEventListener("change", filterPRs);
+      document
+        .getElementById("repository")
+        .addEventListener("change", filterPRs);
+      document
+        .getElementById("start-date")
+        .addEventListener("change", filterPRs);
+      document.getElementById("end-date").addEventListener("change", filterPRs);
+
+      // Load data on page load
+      loadData();
+    </script>
+  </body>
+</html>
