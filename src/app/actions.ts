@@ -95,3 +95,13 @@ export async function updateResumeBullet(prId: string, text: string) {
   });
   revalidatePath("/");
 }
+
+// --- Skill Detection ---
+
+export async function runSkillDetection() {
+  const { detectSkillsForAll } = await import("@/lib/skills/ingest");
+  const result = await detectSkillsForAll();
+  revalidatePath("/skills");
+  revalidatePath("/");
+  return result;
+}
